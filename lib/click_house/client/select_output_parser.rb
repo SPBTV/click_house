@@ -35,6 +35,7 @@ module ClickHouse
           ->(value) { Date.strptime(value, '%Y-%m-%d') }
         when 'DateTime'
           ->(value) { DateTime.strptime(value, '%Y-%m-%d %H:%M:%S') }
+        when 'Nothing' then ->(_) {}
         else
           fail NotImplementedError, "Unknown type #{type.inspect}"
         end.to_proc
@@ -44,8 +45,9 @@ module ClickHouse
         fail ArgumentError unless options.empty?
         Enumerator.new do |y|
           TSV.parse(body).inject(nil) do |types, row|
-            types.try!(:tap) { y << types.zip(row.to_a).map { |type, value| type.call(value) } } ||
-              row.map(&TYPED_PARSER_BUILDER)
+            types&.tap do
+              y << types.zip(row.to_a).map { |type, value| type.call(value) }
+            end || row.map(&TYPED_PARSER_BUILDER)
           end
         end
       end

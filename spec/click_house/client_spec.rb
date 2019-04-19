@@ -6,7 +6,7 @@ RSpec.describe ClickHouse::Client do
 
   describe '#each_selected_row' do
     def select_sql_expression(sql)
-      client.select_from_sql(<<-SQL, format: :tsv_with_names_and_types)[0][0]
+      client.select_from_sql(<<-SQL, format: :tab_separated_with_names_and_types)[0][0]
         SELECT #{sql} FROM system.one FORMAT TSVWithNamesAndTypes
       SQL
     end
@@ -56,7 +56,7 @@ RSpec.describe ClickHouse::Client do
     context 'when value is a date-time' do
       subject { select_sql_expression("toDateTime('1994-03-14 12:34:56')") }
 
-      it { is_expected.to eq(Time.new(1994, 3, 14, 12, 34, 56)) }
+      it { is_expected.to eq(DateTime.new(1994, 3, 14, 12, 34, 56)) }
     end
 
     context 'when value is a enum' do
