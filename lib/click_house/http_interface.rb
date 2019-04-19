@@ -21,6 +21,8 @@ module ClickHouse
 
     private
 
+    attr_reader :query_hash
+
     def initialize_from_url(url:)
       @uri = URI.parse(url)
     end
@@ -34,7 +36,8 @@ module ClickHouse
 
     def initialize_from_uri_components(**options)
       assert_option_keys options, URI_COMPONENT_OPTIONS | QUERY_HASH_OPTIONS
-      query_hash = options.slice(*QUERY_HASH_OPTIONS)
+      @query_hash = options.slice(*QUERY_HASH_OPTIONS)
+
       @uri = URI::HTTP.build(
         **DEFAULT_URI_COMPONENTS,
         query: (URI.encode_www_form(query_hash) unless query_hash.empty?),
@@ -47,8 +50,7 @@ module ClickHouse
         @uri
       else
         @uri.dup.tap do |uri|
-          uri.query =
-            URI.encode_www_form([(URI.decode_www_form(uri.query) if uri.query), params].compact.reduce(:merge))
+          uri.query = URI.encode_www_form([query_hash, params].compact.reduce(:merge))
         end
       end
     end
