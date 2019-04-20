@@ -18,5 +18,11 @@ module ClickHouse
       else fail ArgumentError, "Unexpected value type - #{value.class}"
       end
     end
+
+    def quote_identifier(identifier)
+      identifier = identifier.to_s
+      fail ArgumentError unless identifier.match(/^[a-zA-Z_][0-9a-zA-Z_\.]*$/)
+      "#{identifier}"
+    end
   end
 end
