@@ -8,6 +8,7 @@ rvm:
   - 2.2.0
   - 2.3.0
   - 2.4.1
+  - 2.6.3
 before_install:
 - gem install bundler -v 1.16.3
 - docker run -d -p 8123:8123 yandex/clickhouse-server

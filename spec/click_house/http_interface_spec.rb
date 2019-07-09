@@ -4,9 +4,9 @@ RSpec.describe ClickHouse::HTTPInterface do
   let(:connection) { described_class.new }
 
   describe '#get' do
-    subject { connection.get(query: 'SHOW databases') }
+    subject(:databases) { connection.get(query: 'SHOW databases').split("\n") }
 
-    it { is_expected.to eq("default\nsystem\n") }
+    it { expect(databases).to include("default", "system") }
   end
 
   describe '#post' do

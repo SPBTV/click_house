@@ -12,7 +12,7 @@ module ClickHouse
       # @return [String]
       def self.call(into:, columns: nil, rows: nil)
         [
-          "INSERT INTO #{Array(into).join('.')}",
+          "INSERT INTO #{Array(into).map { |identifier| quote_identifier(identifier) }.join('.')}",
           ("(#{columns.map { |column| Array(column).join('.') }.join(',')})" if columns),
           (values(rows) if rows),
         ].compact.join(' ')
